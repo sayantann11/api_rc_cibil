@@ -199,6 +199,5 @@ def home():
     return "✅ Flask API for Car & CIBIL data with Firebase is running!"
 
 # -------------------- Run App --------------------
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
