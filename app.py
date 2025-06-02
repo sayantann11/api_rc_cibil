@@ -14,10 +14,16 @@ SUREPASS_CIBIL_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2U
 
 load_dotenv()
 
-FIREBASE_CRED_PATH = os.getenv("FIREBASE_CRED_PATH")
-FIREBASE_DB_URL = os.getenv("FIREBASE_DB_URL")
-cred = credentials.Certificate(FIREBASE_CRED_PATH)
-firebase_admin.initialize_app(cred, {'databaseURL': FIREBASE_DB_URL})
+# Get env vars
+firebase_cred_json = os.getenv("FIREBASE_CRED_JSON")
+firebase_db_url = os.getenv("FIREBASE_DB_URL")
+
+# Convert JSON string to dict
+cred_dict = json.loads(firebase_cred_json)
+
+# Initialize Firebase
+cred = credentials.Certificate(cred_dict)
+firebase_admin.initialize_app(cred, {'databaseURL': firebase_db_url})
 
 # -------------------- Flask App --------------------
 
@@ -186,6 +192,7 @@ def fetch_cibil_by_pan():
     return jsonify({"status": "success", "data": data}), 200
 
 
+# -------------------- Home --------------------
 
 @app.route('/save_mobile_pan', methods=['POST'])
 def save_mobile_pan():
@@ -227,13 +234,10 @@ def get_pan_by_mobile():
         return jsonify({"error": str(e)}), 500
 
 
-# -------------------- Home --------------------
-
 @app.route('/')
 def home():
     return "✅ Flask API for Car & CIBIL data with Firebase is running!"
 
 # -------------------- Run App --------------------
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
